@@ -1,0 +1,3 @@
+[submodule "gitkraken_tests_sub"]
+	path = gitkraken_tests_sub
+	url = https://github.com/matanhavi/gitkraken_tests_sub.git
