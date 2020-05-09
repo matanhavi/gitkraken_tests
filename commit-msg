@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+# post-checkout hook
+import argparse
+import sys, os, re
+from tkinter import *
+from tkinter.messagebox import *
+
+# Collect the parameters
+commit_msg_filepath = sys.argv[1]
+
+with open(commit_msg_filepath, 'r+') as f:
+	original_msg = f.read()
+	
+	#check commit
+	if not re.match("^[rR]efs #", original_msg):
+		showerror("error", "Error - Commit message must start with ref #")
+
+		print("Error - Commit message must start with ref #")
+		exit (1)
+	else:
+		#replace refs to the Flying-Production/Issues repo
+		fixed_msg = re.sub(re.compile("[rR]efs #",re.MULTILINE),"re-refs #",original_msg)
+		
+		original_msg_sub = re.sub(r'(?m)^\#.*\n?',"",original_msg)
+		fixed_msg_sub = re.sub(r'(?m)^\#.*\n?',"",fixed_msg)
+
+		tmp = askyesnocancel(title="info", message="Your commit meggase has been fixed to apply commit rules\n-----Original message-----\n {0}\n-----Fixed message-----\n{1}\n\nDo you want to keep these changes?".format(original_msg_sub, fixed_msg_sub))	
+		if tmp is True:		
+			f.seek(0, 0)
+			f.write(fixed_msg)
+		elif tmp is None :
+			exit (1)
+
+		exit (0)	
